@@ -17,6 +17,8 @@ public interface IQuartzJobService extends IService<QuartzJob> {
 
 	List<QuartzJob> findByJobClassName(String jobClassName);
 
+	List<QuartzJob> findCommonStatisticsByParam(String jobParam);
+
 	boolean saveAndScheduleJob(QuartzJob quartzJob);
 
 	boolean editAndScheduleJob(QuartzJob quartzJob) throws SchedulerException;

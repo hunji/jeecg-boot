@@ -132,11 +132,12 @@ spring:
           password: 123456
           driver-class-name: com.mysql.jdbc.Driver
           # 多数据源配置
-          #multi-datasource1:
-          #url: jdbc:mysql://localhost:3306/jeecg-boot2?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
-          #username: root
-          #password: root
-          #driver-class-name: com.mysql.jdbc.Driver
+        newmes:
+          driver-class-name: oracle.jdbc.driver.OracleDriver
+          url: jdbc:oracle:thin:@172.31.1.37:1521:MESDB
+          username: MESSERIES
+          password: sa
+          validation-query: SELECT 1 FROM DUAL
   #redis 配置
   redis:
     database: 0
@@ -205,6 +206,12 @@ jeecg :
     minio_name: ??
     minio_pass: ??
     bucketName: otatest
+  wechatServiceUrl:
+    http://172.31.1.5:8081/weixin/message/send
+#  wechatToUser:
+#    0293;0441;0319;0425;0148;0811
+#  wechatToUserCZ:
+#    0196;0118;0441;0293
 #Mybatis输出sql日志
 logging:
   level:

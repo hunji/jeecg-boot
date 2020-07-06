@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.om.mapper.MesLogMapper">
+
+    <!-- tblerptransactionlog 和表  tblerptransactionxmllog 连接查询-->
+    <select id="queryLogInfo" resultType="org.jeecg.modules.om.entity.MesLogEntity">
+		Select a.* from tblerptransactionlog a
+		left join tblerptransactionxmllog b on a.id=b.id
+		<where>
+			<if test='logType == "1"'>
+				and b.id is null
+			</if>
+			<if test='logType == "2"'>
+				and b.id is not null
+			</if>
+			<if test='moduleId != null and moduleId.trim()!= ""'>
+				and a.moduleid = #{moduleId}
+			</if>
+			<if test='functionId != null and functionId.trim()!= ""'>
+				and a.functionid = #{functionId}
+			</if>
+		</where>
+		order by a.createdate desc
+	</select>
+
+</mapper>

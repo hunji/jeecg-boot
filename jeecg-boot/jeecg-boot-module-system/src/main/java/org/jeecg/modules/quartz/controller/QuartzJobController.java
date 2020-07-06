@@ -9,12 +9,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.authz.annotation.RequiresRoles;
+import cn.hutool.core.util.StrUtil;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.common.util.ImportExcelUtil;
 import org.jeecg.modules.quartz.entity.QuartzJob;
 import org.jeecg.modules.quartz.service.IQuartzJobService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
@@ -63,7 +62,7 @@ public class QuartzJobController {
 
 	/**
 	 * 分页列表查询
-	 * 
+	 *
 	 * @param quartzJob
 	 * @param pageNo
 	 * @param pageSize
@@ -72,38 +71,45 @@ public class QuartzJobController {
 	 */
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public Result<?> queryPageList(QuartzJob quartzJob, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest req) {
+								   @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest req) {
 		QueryWrapper<QuartzJob> queryWrapper = QueryGenerator.initQueryWrapper(quartzJob, req.getParameterMap());
 		Page<QuartzJob> page = new Page<QuartzJob>(pageNo, pageSize);
 		IPage<QuartzJob> pageList = quartzJobService.page(page, queryWrapper);
-        return Result.ok(pageList);
+		return Result.ok(pageList);
 
 	}
 
 	/**
 	 * 添加定时任务
-	 * 
+	 *
 	 * @param quartzJob
 	 * @return
 	 */
-	//@RequiresRoles({"admin"})
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public Result<?> add(@RequestBody QuartzJob quartzJob) {
-		List<QuartzJob> list = quartzJobService.findByJobClassName(quartzJob.getJobClassName());
+		List<QuartzJob> list = new ArrayList<>();
+
+		if(!isCommonStatisticsJob(quartzJob.getJobClassName())){
+			list = quartzJobService.findByJobClassName(quartzJob.getJobClassName());
+
+		}else{
+			list = quartzJobService.findCommonStatisticsByParam(quartzJob.getParameter());
+
+		}
 		if (list != null && list.size() > 0) {
 			return Result.error("该定时任务类名已存在");
 		}
+
 		quartzJobService.saveAndScheduleJob(quartzJob);
 		return Result.ok("创建定时任务成功");
 	}
 
 	/**
 	 * 更新定时任务
-	 * 
+	 *
 	 * @param quartzJob
 	 * @return
 	 */
-	//@RequiresRoles({"admin"})
 	@RequestMapping(value = "/edit", method = RequestMethod.PUT)
 	public Result<?> eidt(@RequestBody QuartzJob quartzJob) {
 		try {
@@ -112,16 +118,15 @@ public class QuartzJobController {
 			log.error(e.getMessage(),e);
 			return Result.error("更新定时任务失败!");
 		}
-	    return Result.ok("更新定时任务成功!");
+		return Result.ok("更新定时任务成功!");
 	}
 
 	/**
 	 * 通过id删除
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
-	//@RequiresRoles({"admin"})
 	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
 	public Result<?> delete(@RequestParam(name = "id", required = true) String id) {
 		QuartzJob quartzJob = quartzJobService.getById(id);
@@ -129,17 +134,16 @@ public class QuartzJobController {
 			return Result.error("未找到对应实体");
 		}
 		quartzJobService.deleteAndStopJob(quartzJob);
-        return Result.ok("删除成功!");
+		return Result.ok("删除成功!");
 
 	}
 
 	/**
 	 * 批量删除
-	 * 
+	 *
 	 * @param ids
 	 * @return
 	 */
-	//@RequiresRoles({"admin"})
 	@RequestMapping(value = "/deleteBatch", method = RequestMethod.DELETE)
 	public Result<?> deleteBatch(@RequestParam(name = "ids", required = true) String ids) {
 		if (ids == null || "".equals(ids.trim())) {
@@ -149,26 +153,34 @@ public class QuartzJobController {
 			QuartzJob job = quartzJobService.getById(id);
 			quartzJobService.deleteAndStopJob(job);
 		}
-        return Result.ok("删除定时任务成功!");
+		return Result.ok("删除定时任务成功!");
 	}
 
 	/**
 	 * 暂停定时任务
-	 * 
+	 *
 	 * @param jobClassName
 	 * @return
 	 */
-	//@RequiresRoles({"admin"})
 	@GetMapping(value = "/pause")
 	@ApiOperation(value = "暂停定时任务")
-	public Result<Object> pauseJob(@RequestParam(name = "jobClassName", required = true) String jobClassName) {
+	public Result<Object> pauseJob(@RequestParam(name = "jobClassName", required = true) String jobClassName,
+								   @RequestParam(name = "jobParam", required = true) String jobParam) {
 		QuartzJob job = null;
 		try {
-			job = quartzJobService.getOne(new LambdaQueryWrapper<QuartzJob>().eq(QuartzJob::getJobClassName, jobClassName));
+			job = quartzJobService.getOne(
+					new LambdaQueryWrapper<QuartzJob>()
+							.eq(QuartzJob::getJobClassName, jobClassName)
+							.eq(!StrUtil.isEmpty(jobParam),QuartzJob::getParameter,jobParam));
 			if (job == null) {
 				return Result.error("定时任务不存在！");
 			}
-			scheduler.pauseJob(JobKey.jobKey(jobClassName.trim()));
+			// 如果是CommonStatisticsJob的话 把参数拼接到名称里面
+			String identName = jobClassName;
+			if(isCommonStatisticsJob(identName)){
+				identName += jobParam;
+			}
+			scheduler.pauseJob(JobKey.jobKey(identName));
 		} catch (SchedulerException e) {
 			throw new JeecgBootException("暂停定时任务失败");
 		}
@@ -179,38 +191,39 @@ public class QuartzJobController {
 
 	/**
 	 * 启动定时任务
-	 * 
+	 *
 	 * @param jobClassName
 	 * @return
 	 */
-	//@RequiresRoles({"admin"})
 	@GetMapping(value = "/resume")
 	@ApiOperation(value = "恢复定时任务")
-	public Result<Object> resumeJob(@RequestParam(name = "jobClassName", required = true) String jobClassName) {
-		QuartzJob job = quartzJobService.getOne(new LambdaQueryWrapper<QuartzJob>().eq(QuartzJob::getJobClassName, jobClassName));
+	public Result<Object> resumeJob(@RequestParam(name = "jobClassName", required = true) String jobClassName,
+									@RequestParam(name = "jobParam", required = true) String jobParam) {
+		QuartzJob job = quartzJobService.getOne(new LambdaQueryWrapper<QuartzJob>()
+				.eq(QuartzJob::getJobClassName, jobClassName)
+				.eq(!StrUtil.isEmpty(jobParam),QuartzJob::getParameter,jobParam));
 		if (job == null) {
 			return Result.error("定时任务不存在！");
 		}
 		quartzJobService.resumeJob(job);
-		//scheduler.resumeJob(JobKey.jobKey(job.getJobClassName().trim()));
 		return Result.ok("恢复定时任务成功");
 	}
 
 	/**
 	 * 通过id查询
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
 	@RequestMapping(value = "/queryById", method = RequestMethod.GET)
 	public Result<?> queryById(@RequestParam(name = "id", required = true) String id) {
 		QuartzJob quartzJob = quartzJobService.getById(id);
-        return Result.ok(quartzJob);
+		return Result.ok(quartzJob);
 	}
 
 	/**
 	 * 导出excel
-	 * 
+	 *
 	 * @param request
 	 * @param quartzJob
 	 */
@@ -231,18 +244,15 @@ public class QuartzJobController {
 
 	/**
 	 * 通过excel导入数据
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	@RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-	public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-		// 错误信息
-		List<String> errorMessage = new ArrayList<>();
-		int successLines = 0, errorLines = 0;
 		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
 			MultipartFile file = entity.getValue();// 获取上传文件对象
 			ImportParams params = new ImportParams();
@@ -250,10 +260,11 @@ public class QuartzJobController {
 			params.setHeadRows(1);
 			params.setNeedSave(true);
 			try {
-				List<Object> listQuartzJobs = ExcelImportUtil.importExcel(file.getInputStream(), QuartzJob.class, params);
-				List<String> list = ImportExcelUtil.importDateSave(listQuartzJobs, IQuartzJobService.class, errorMessage,CommonConstant.SQL_INDEX_UNIQ_JOB_CLASS_NAME);
-				errorLines+=list.size();
-				successLines+=(listQuartzJobs.size()-errorLines);
+				List<QuartzJob> listQuartzJobs = ExcelImportUtil.importExcel(file.getInputStream(), QuartzJob.class, params);
+				for (QuartzJob quartzJobExcel : listQuartzJobs) {
+					quartzJobService.save(quartzJobExcel);
+				}
+				return Result.ok("文件导入成功！数据行数：" + listQuartzJobs.size());
 			} catch (Exception e) {
 				log.error(e.getMessage(), e);
 				return Result.error("文件导入失败！");
@@ -265,6 +276,10 @@ public class QuartzJobController {
 				}
 			}
 		}
-		return ImportExcelUtil.imporReturnRes(errorLines,successLines,errorMessage);
+		return Result.error("文件导入失败！");
+	}
+
+	private boolean isCommonStatisticsJob(String jobClassName){
+		return "org.jeecg.modules.quartz.job.CommonStatisticsJob".equals(jobClassName);
 	}
 }

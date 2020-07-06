@@ -142,13 +142,14 @@
             align:"center",
             dataIndex: 'jobClassName',
             sorter: true,
-/*            customRender:function (text) {
+            customRender:function (text) {
               return "*"+text.substring(9,text.length);
-            }*/
+            }
           },
           {
             title: 'cron表达式',
             align:"center",
+            width:160,
             dataIndex: 'cronExpression'
           },
           {
@@ -223,7 +224,7 @@
           title:"确认暂停",
           content:"是否暂停选中任务?",
           onOk: function(){
-            getAction(that.url.pause,{jobClassName:record.jobClassName}).then((res)=>{
+            getAction(that.url.pause,{jobClassName:record.jobClassName,jobParam:record.parameter}).then((res)=>{
               if(res.success){
                 that.$message.success(res.message);
                 that.loadData();
@@ -243,7 +244,7 @@
           title:"确认启动",
           content:"是否启动选中任务?",
           onOk: function(){
-            getAction(that.url.resume,{jobClassName:record.jobClassName}).then((res)=>{
+            getAction(that.url.resume,{jobClassName:record.jobClassName,jobParam:record.parameter}).then((res)=>{
               if(res.success){
                 that.$message.success(res.message);
                 that.loadData();

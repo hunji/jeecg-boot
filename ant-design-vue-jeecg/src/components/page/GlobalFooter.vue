@@ -11,7 +11,7 @@
     <div class="copyright">
       Copyright
       <a-icon type="copyright"/>
-      2020 
+      2020   
       <!-- <span>JEECG开源社区 出品</span> -->
     </div>
   </div>
