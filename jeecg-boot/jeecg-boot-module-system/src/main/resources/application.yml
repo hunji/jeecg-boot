@@ -1,6 +1,10 @@
 spring:
   profiles:
     active: dev
+  # 设置超时时间
+  mvc:
+    async:
+      request-timeout: 30000
 swagger:
   production: false
   basic:
