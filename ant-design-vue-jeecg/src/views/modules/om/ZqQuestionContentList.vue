@@ -5,13 +5,13 @@
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="标题">
-              <a-input placeholder="请输入标题" v-model="queryParam.title"></a-input>
+            <a-form-item label="提出人">
+              <a-input placeholder="请输入提出人" v-model="queryParam.proposer"></a-input>
             </a-form-item>
           </a-col>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="0.未审核 1.已审核">
-              <a-input placeholder="请输入0.未审核 1.已审核" v-model="queryParam.rstate"></a-input>
+            <a-form-item label="是否解决">
+              <a-input v-model="queryParam.rstate"></a-input>
             </a-form-item>
           </a-col>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
@@ -28,11 +28,12 @@
       </a-form>
     </div>
     <!-- 查询区域-END -->
+
     
     <!-- 操作按钮区域 -->
     <div class="table-operator">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
-      <a-button type="primary" icon="download" @click="handleExportXls('知识内容信息')">导出</a-button>
+      <a-button type="primary" icon="download" @click="handleExportXls('日常问题')">导出</a-button>
       <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
@@ -95,8 +96,15 @@
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
                   <a>删除</a>
                 </a-popconfirm>
-                <a-popconfirm title="确定审核通过吗?" @confirm="() => handleDelete(record.id)">
-                  <a>通过</a>
+              </a-menu-item>
+              <a-menu-item>
+                <a-popconfirm title="已解决?" >
+                  <a>已解决</a>
+                </a-popconfirm>
+              </a-menu-item>
+              <a-menu-item>
+                <a-popconfirm title="确定转为知识吗?" >
+                  <a>提交</a>
                 </a-popconfirm>
               </a-menu-item>
             </a-menu>
@@ -106,7 +114,7 @@
       </a-table>
     </div>
 
-    <zqKnowledgeContent-modal ref="modalForm" @ok="modalFormOk"></zqKnowledgeContent-modal>
+    <zqQuestionContent-modal ref="modalForm" @ok="modalFormOk"></zqQuestionContent-modal>
   </a-card>
 </template>
 
@@ -115,18 +123,18 @@
   import '@/assets/less/TableExpand.less'
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import ZqKnowledgeContentModal from './modules/ZqKnowledgeContentModal'
+  import ZqQuestionContentModal from './modules/ZqQuestionContentModal'
   import {filterMultiDictText} from '@/components/dict/JDictSelectUtil'
 
   export default {
-    name: "ZqKnowledgeContentList",
+    name: "ZqQuestionContentList",
     mixins:[JeecgListMixin, mixinDevice],
     components: {
-      ZqKnowledgeContentModal
+      ZqQuestionContentModal
     },
     data () {
       return {
-        description: '知识内容信息管理页面',
+        description: '日常问题管理页面',
         // 表头
         columns: [
           {
@@ -140,9 +148,9 @@
             }
           },
           {
-            title:'标题',
+            title:'提出人',
             align:"center",
-            dataIndex: 'title'
+            dataIndex: 'proposer'
           },
           {
             title:'简要描述',
@@ -150,9 +158,14 @@
             dataIndex: 'brief'
           },
           {
-            title:'类型 编号',
+            title:'是否解决',
             align:"center",
-            dataIndex: 'typeid_dictText'
+            dataIndex: 'solutionState_dictText'
+          },
+          {
+            title:'问题类型',
+            align:"center",
+            dataIndex: 'typeId_dictText'
           },
           {
             title: '操作',
@@ -164,11 +177,11 @@
           }
         ],
         url: {
-          list: "/om/zqKnowledgeContent/list",
-          delete: "/om/zqKnowledgeContent/delete",
-          deleteBatch: "/om/zqKnowledgeContent/deleteBatch",
-          exportXlsUrl: "/om/zqKnowledgeContent/exportXls",
-          importExcelUrl: "om/zqKnowledgeContent/importExcel",
+          list: "/om/zqQuestionContent/list",
+          delete: "/om/zqQuestionContent/delete",
+          deleteBatch: "/om/zqQuestionContent/deleteBatch",
+          exportXlsUrl: "/om/zqQuestionContent/exportXls",
+          importExcelUrl: "om/zqQuestionContent/importExcel",
         },
         dictOptions:{},
       }
@@ -185,5 +198,38 @@
   }
 </script>
 <style scoped>
-  @import '~@assets/less/common.less';
+  .ant-card-body .table-operator {
+    margin-bottom: 18px;
+  }
+
+  .ant-table-tbody .ant-table-row td {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+
+  .anty-row-operator button {
+    margin: 0 5px
+  }
+
+  .ant-btn-danger {
+    background-color: #ffffff
+  }
+
+  .ant-modal-cust-warp {
+    height: 100%
+  }
+
+  .ant-modal-cust-warp .ant-modal-body {
+    height: calc(100% - 110px) !important;
+    overflow-y: auto
+  }
+
+  .ant-modal-cust-warp .ant-modal-content {
+    height: 90% !important;
+    overflow-y: hidden
+  }
+  /** Button按钮间距 */
+  .ant-btn {
+    margin-left: 3px
+  }
 </style>
