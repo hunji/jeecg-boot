@@ -32,6 +32,9 @@
         <a-form-item label="类型说明" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input v-decorator="['content']" placeholder="请输入类型说明"></a-input>
         </a-form-item>
+        <a-form-item label="内容" :labelCol="labelCol" :wrapperCol="wrapperCol">
+          <j-editor v-decorator="['content',{trigger:'input'}]"/>
+        </a-form-item>
         <a-form-item label="排序字段" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input-number v-decorator="['ordernum']" placeholder="请输入排序字段" style="width: 100%"/>
         </a-form-item>
@@ -48,12 +51,14 @@
   import { validateDuplicateValue } from '@/utils/util'
   import JImageUpload from '@/components/jeecg/JImageUpload'
   import JTreeSelect from '@/components/jeecg/JTreeSelect'
+  import JEditor from '@/components/jeecg/JEditor'
   
   export default {
     name: "ZqKnowledgeTypeModal",
     components: { 
       JImageUpload,
-      JTreeSelect
+      JTreeSelect,
+      JEditor
     },
     data () {
       return {

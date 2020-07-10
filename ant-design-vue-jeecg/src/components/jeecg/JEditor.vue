@@ -23,6 +23,7 @@
   import 'tinymce/plugins/colorpicker'
   import 'tinymce/plugins/textcolor'
   import 'tinymce/plugins/fullscreen'
+  import 'tinymce/icons/default'
   import { uploadAction,getFileAccessHttpUrl } from '@/api/manage'
   export default {
     components: {
