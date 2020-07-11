@@ -85,6 +85,8 @@ public class QuartzJobController {
 	 * @param quartzJob
 	 * @return
 	 */
+
+	// @RequiresRoles("admin")
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public Result<?> add(@RequestBody QuartzJob quartzJob) {
 		List<QuartzJob> list = new ArrayList<>();
@@ -110,6 +112,7 @@ public class QuartzJobController {
 	 * @param quartzJob
 	 * @return
 	 */
+	//@RequiresRoles("admin")
 	@RequestMapping(value = "/edit", method = RequestMethod.PUT)
 	public Result<?> eidt(@RequestBody QuartzJob quartzJob) {
 		try {
@@ -127,6 +130,7 @@ public class QuartzJobController {
 	 * @param id
 	 * @return
 	 */
+	//@RequiresRoles("admin")
 	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
 	public Result<?> delete(@RequestParam(name = "id", required = true) String id) {
 		QuartzJob quartzJob = quartzJobService.getById(id);
@@ -144,6 +148,7 @@ public class QuartzJobController {
 	 * @param ids
 	 * @return
 	 */
+	//@RequiresRoles("admin")
 	@RequestMapping(value = "/deleteBatch", method = RequestMethod.DELETE)
 	public Result<?> deleteBatch(@RequestParam(name = "ids", required = true) String ids) {
 		if (ids == null || "".equals(ids.trim())) {
@@ -162,30 +167,22 @@ public class QuartzJobController {
 	 * @param jobClassName
 	 * @return
 	 */
+	//@RequiresRoles("admin")
 	@GetMapping(value = "/pause")
 	@ApiOperation(value = "暂停定时任务")
 	public Result<Object> pauseJob(@RequestParam(name = "jobClassName", required = true) String jobClassName,
 								   @RequestParam(name = "jobParam", required = true) String jobParam) {
 		QuartzJob job = null;
-		try {
-			job = quartzJobService.getOne(
-					new LambdaQueryWrapper<QuartzJob>()
-							.eq(QuartzJob::getJobClassName, jobClassName)
-							.eq(!StrUtil.isEmpty(jobParam),QuartzJob::getParameter,jobParam));
-			if (job == null) {
-				return Result.error("定时任务不存在！");
-			}
-			// 如果是CommonStatisticsJob的话 把参数拼接到名称里面
-			String identName = jobClassName;
-			if(isCommonStatisticsJob(identName)){
-				identName += jobParam;
-			}
-			scheduler.pauseJob(JobKey.jobKey(identName));
-		} catch (SchedulerException e) {
-			throw new JeecgBootException("暂停定时任务失败");
+		job = quartzJobService.getOne(new LambdaQueryWrapper<QuartzJob>().eq(QuartzJob::getJobClassName, jobClassName));
+		if (job == null) {
+			return Result.error("定时任务不存在！");
 		}
-		job.setStatus(CommonConstant.STATUS_DISABLE);
-		quartzJobService.updateById(job);
+		// 如果是CommonStatisticsJob的话 把参数拼接到名称里面
+		String identName = jobClassName;
+		if(isCommonStatisticsJob(identName)){
+			identName += jobParam;
+		}
+		quartzJobService.pause(job);
 		return Result.ok("暂停定时任务成功");
 	}
 
@@ -195,6 +192,7 @@ public class QuartzJobController {
 	 * @param jobClassName
 	 * @return
 	 */
+	// @RequiresRoles("admin")
 	@GetMapping(value = "/resume")
 	@ApiOperation(value = "恢复定时任务")
 	public Result<Object> resumeJob(@RequestParam(name = "jobClassName", required = true) String jobClassName,
@@ -254,7 +252,7 @@ public class QuartzJobController {
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
 		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
-			MultipartFile file = entity.getValue();// 获取上传文件对象
+			MultipartFile file = entity.getValue();
 			ImportParams params = new ImportParams();
 			params.setTitleRows(2);
 			params.setHeadRows(1);
@@ -281,5 +279,27 @@ public class QuartzJobController {
 
 	private boolean isCommonStatisticsJob(String jobClassName){
 		return "org.jeecg.modules.quartz.job.CommonStatisticsJob".equals(jobClassName);
+	}
+
+	/**
+	 * 立即执行
+	 * @param id
+	 * @return
+	 */
+	//@RequiresRoles("admin")
+	@GetMapping("/execute")
+	public Result<?> execute(@RequestParam(name = "id", required = true) String id) {
+		QuartzJob quartzJob = quartzJobService.getById(id);
+		if (quartzJob == null) {
+			return Result.error("未找到对应实体");
+		}
+		try {
+			quartzJobService.execute(quartzJob);
+		} catch (Exception e) {
+			//e.printStackTrace();
+			log.info("定时任务 立即执行失败>>"+e.getMessage());
+			return Result.error("执行失败!");
+		}
+		return Result.ok("执行成功!");
 	}
 }

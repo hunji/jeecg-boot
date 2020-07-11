@@ -34,7 +34,7 @@ public class WeChatUtil {
         postBody.put("content", content);
 
         String str = HttpRequest.post(staticWeChatServiceUrl)
-                .body(JSONUtil.parse(postBody))
+                .body(JSONUtil.parse(postBody).toString())
                 .execute().body();
         return str;
     }
