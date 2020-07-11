@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.ISqlParserFilter;
 import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantSqlParser;
 import net.sf.jsqlparser.expression.Expression;
@@ -61,7 +60,7 @@ public class MybatisPlusConfig {
         tenantSqlParser.setTenantHandler(new TenantHandler() {
 
             @Override
-            public Expression getTenantId() {
+            public Expression getTenantId(boolean select) {
                 String tenant_id = TenantContext.getTenant();
                 return new LongValue(tenant_id);
             }
@@ -110,13 +109,5 @@ public class MybatisPlusConfig {
             }
         });
         return paginationInterceptor;
-    }
-
-    /**
-     * mybatis-plus SQL执行效率插件【生产环境可以关闭】
-     */
-    @Bean
-    public PerformanceInterceptor performanceInterceptor() {
-        return new PerformanceInterceptor();
     }
 }
