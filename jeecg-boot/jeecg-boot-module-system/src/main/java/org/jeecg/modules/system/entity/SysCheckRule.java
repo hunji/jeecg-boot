@@ -30,7 +30,7 @@ public class SysCheckRule {
     /**
      * 主键id
      */
-    @TableId(type = IdType.ID_WORKER_STR)
+    @TableId(type = IdType.ASSIGN_UUID)
     @ApiModelProperty(value = "主键id")
     private String id;
     /**

@@ -33,7 +33,7 @@ public class OaWpsModel implements Serializable {
     /**
      * id
      */
-    @TableId(type = IdType.ID_WORKER_STR)
+    @TableId(type = IdType.ASSIGN_UUID)
     @ApiModelProperty(value = "id")
     private String id;
     /**

@@ -28,7 +28,7 @@ public class MesLogEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "ID")
-    @TableId(type = IdType.ID_WORKER_STR)
+    @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
     @ApiModelProperty(value = "模块名")

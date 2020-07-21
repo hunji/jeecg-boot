@@ -22,7 +22,7 @@ public class JeecgOrderCustomer implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**主键*/
-    @TableId(type = IdType.ID_WORKER_STR)
+    @TableId(type = IdType.ASSIGN_UUID)
 	private java.lang.String id;
 	/**客户名*/
 	@Excel(name="客户名字",width=15)
