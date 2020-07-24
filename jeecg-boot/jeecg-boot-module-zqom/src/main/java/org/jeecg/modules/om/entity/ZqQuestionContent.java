@@ -75,9 +75,9 @@ public class ZqQuestionContent implements Serializable {
 	@Excel(name = "是否解决", width = 15)
     @ApiModelProperty(value = "是否解决")
     private java.lang.Integer solutionState;
-	/**问题类型*/
-	@Excel(name = "问题类型", width = 15, dictTable = "zq_question_type", dicText = "name", dicCode = "id")
-	@Dict(dictTable = "zq_question_type", dicText = "name", dicCode = "id")
+    /**问题类型*/
+    @Excel(name = "问题类型", width = 15, dictTable = "zq_question_type", dicText = "id,pid,name,has_child", dicCode = "0")
+    @Dict(dictTable = "zq_question_type", dicText = "id,pid,name,has_child", dicCode = "0")
     @ApiModelProperty(value = "问题类型")
-    private java.lang.Double typeId;
+    private java.lang.String typeId;
 }

@@ -5,13 +5,13 @@
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="提出人">
-              <a-input placeholder="请输入提出人" v-model="queryParam.proposer"></a-input>
+            <a-form-item label="是否解决">
+              <j-switch placeholder="请选择是否解决" v-model="queryParam.solutionState"  query></j-switch>
             </a-form-item>
           </a-col>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="是否解决">
-              <a-input v-model="queryParam.rstate"></a-input>
+            <a-form-item label="问题类型">
+              <j-dict-select-tag placeholder="请选择问题类型" v-model="queryParam.typeId" dictCode="zq_question_type,id,pid,name,has_child,0"/>
             </a-form-item>
           </a-col>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
@@ -28,7 +28,6 @@
       </a-form>
     </div>
     <!-- 查询区域-END -->
-
     
     <!-- 操作按钮区域 -->
     <div class="table-operator">
@@ -55,6 +54,7 @@
       <a-table
         ref="table"
         size="middle"
+        :scroll="{x:true}"
         bordered
         rowKey="id"
         :columns="columns"
@@ -80,7 +80,7 @@
             type="primary"
             icon="download"
             size="small"
-            @click="uploadFile(text)">
+            @click="downloadFile(text)">
             下载
           </a-button>
         </template>
@@ -93,18 +93,11 @@
             <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
             <a-menu slot="overlay">
               <a-menu-item>
+                <a @click="handleDetail(record)">详情</a>
+              </a-menu-item>
+              <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
                   <a>删除</a>
-                </a-popconfirm>
-              </a-menu-item>
-              <a-menu-item>
-                <a-popconfirm title="已解决?" >
-                  <a>已解决</a>
-                </a-popconfirm>
-              </a-menu-item>
-              <a-menu-item>
-                <a-popconfirm title="确定转为知识吗?" >
-                  <a>提交</a>
                 </a-popconfirm>
               </a-menu-item>
             </a-menu>
@@ -114,7 +107,7 @@
       </a-table>
     </div>
 
-    <zqQuestionContent-modal ref="modalForm" @ok="modalFormOk"></zqQuestionContent-modal>
+    <zq-question-content-modal ref="modalForm" @ok="modalFormOk"></zq-question-content-modal>
   </a-card>
 </template>
 
@@ -124,12 +117,16 @@
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import ZqQuestionContentModal from './modules/ZqQuestionContentModal'
-  import {filterMultiDictText} from '@/components/dict/JDictSelectUtil'
+
+  import JDictSelectTag from '@/components/dict/JDictSelectTag.vue'
+  import JSwitch from '@/components/jeecg/JSwitch'
 
   export default {
     name: "ZqQuestionContentList",
     mixins:[JeecgListMixin, mixinDevice],
     components: {
+      JDictSelectTag,
+      JSwitch,
       ZqQuestionContentModal
     },
     data () {
@@ -158,9 +155,22 @@
             dataIndex: 'brief'
           },
           {
+            title:'详情',
+            align:"center",
+            dataIndex: 'content',
+            scopedSlots: {customRender: 'htmlSlot'}
+          },
+          {
+            title:'解决方案',
+            align:"center",
+            dataIndex: 'solution',
+            scopedSlots: {customRender: 'htmlSlot'}
+          },
+          {
             title:'是否解决',
             align:"center",
-            dataIndex: 'solutionState_dictText'
+            dataIndex: 'solutionState',
+            customRender: (text) => (text ? filterMultiDictText(this.dictOptions['solutionState'], text) : ''),
           },
           {
             title:'问题类型',
@@ -171,7 +181,7 @@
             title: '操作',
             dataIndex: 'action',
             align:"center",
-            // fixed:"right",
+            fixed:"right",
             width:147,
             scopedSlots: { customRender: 'action' }
           }
@@ -182,9 +192,13 @@
           deleteBatch: "/om/zqQuestionContent/deleteBatch",
           exportXlsUrl: "/om/zqQuestionContent/exportXls",
           importExcelUrl: "om/zqQuestionContent/importExcel",
+          
         },
         dictOptions:{},
       }
+    },
+    created() {
+      this.$set(this.dictOptions, 'solutionState', [{text:'是',value:'Y'},{text:'否',value:'N'}])
     },
     computed: {
       importExcelUrl: function(){
@@ -198,38 +212,5 @@
   }
 </script>
 <style scoped>
-  .ant-card-body .table-operator {
-    margin-bottom: 18px;
-  }
-
-  .ant-table-tbody .ant-table-row td {
-    padding-top: 15px;
-    padding-bottom: 15px;
-  }
-
-  .anty-row-operator button {
-    margin: 0 5px
-  }
-
-  .ant-btn-danger {
-    background-color: #ffffff
-  }
-
-  .ant-modal-cust-warp {
-    height: 100%
-  }
-
-  .ant-modal-cust-warp .ant-modal-body {
-    height: calc(100% - 110px) !important;
-    overflow-y: auto
-  }
-
-  .ant-modal-cust-warp .ant-modal-content {
-    height: 90% !important;
-    overflow-y: hidden
-  }
-  /** Button按钮间距 */
-  .ant-btn {
-    margin-left: 3px
-  }
+  @import '~@assets/less/common.less';
 </style>

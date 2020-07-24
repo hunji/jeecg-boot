@@ -6,134 +6,58 @@
     :closable="false"
     @close="close"
     :visible="visible">
-  
-    <a-spin :spinning="confirmLoading">
-      <a-form :form="form">
-
-        <a-form-item label="提出人" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="['proposer']" placeholder="请输入提出人"></a-input>
-        </a-form-item>
-        <a-form-item label="简要描述" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-textarea v-decorator="['brief']" rows="4" placeholder="请输入简要描述"/>
-        </a-form-item>
-        <a-form-item label="详情" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="['content']" placeholder="请输入详情"></a-input>
-        </a-form-item>
-        <a-form-item label="解决方案" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="['solution']" placeholder="请输入解决方案"></a-input>
-        </a-form-item>
-        <a-form-item label="是否解决" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input-number v-decorator="['solutionState']" placeholder="请输入是否解决" style="width: 100%"/>
-        </a-form-item>
-        <a-form-item label="问题类型" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <j-dict-select-tag type="list" v-decorator="['typeId', validatorRules.typeId]" :trigger-change="true" dictCode="zq_question_type,name,id" placeholder="请选择问题类型"/>
-        </a-form-item>
-        
-      </a-form>
-    </a-spin>
-    <a-button type="primary" @click="handleOk">确定</a-button>
-    <a-button type="primary" @click="handleCancel">取消</a-button>
+    <zq-question-content-form ref="realForm" @ok="submitCallback" :disabled="disableSubmit" normal></zq-question-content-form>
+    <div class="drawer-footer">
+      <a-button @click="handleCancel" style="margin-bottom: 0;">关闭</a-button>
+      <a-button v-if="!disableSubmit"  @click="handleOk" type="primary" style="margin-bottom: 0;">提交</a-button>
+    </div>
   </a-drawer>
 </template>
 
 <script>
 
-  import { httpAction } from '@/api/manage'
-  import pick from 'lodash.pick'
-  import { validateDuplicateValue } from '@/utils/util'
-  import JDictSelectTag from "@/components/dict/JDictSelectTag"
-  
+  import ZqQuestionContentForm from './ZqQuestionContentForm'
+
   export default {
     name: "ZqQuestionContentModal",
-    components: { 
-      JDictSelectTag,
+    components: {
+      ZqQuestionContentForm
     },
     data () {
       return {
-        form: this.$form.createForm(this),
         title:"操作",
         width:800,
         visible: false,
-        model: {},
-        labelCol: {
-          xs: { span: 24 },
-          sm: { span: 5 },
-        },
-        wrapperCol: {
-          xs: { span: 24 },
-          sm: { span: 16 },
-        },
-        confirmLoading: false,
-        validatorRules: {
-          typeId: {
-            rules: [
-              { required: true, message: '请输入问题类型!'},
-            ]
-          },
-        },
-        url: {
-          add: "/om/zqQuestionContent/add",
-          edit: "/om/zqQuestionContent/edit",
-        }
+        disableSubmit: false
       }
-    },
-    created () {
     },
     methods: {
       add () {
-        this.edit({});
+        this.visible=true
+        this.$nextTick(()=>{
+          this.$refs.realForm.add();
+        })
       },
       edit (record) {
-        this.form.resetFields();
-        this.model = Object.assign({}, record);
-        this.visible = true;
-        this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'proposer','brief','content','solution','solutionState','typeId'))
-        })
+        this.visible=true
+        this.$nextTick(()=>{
+          this.$refs.realForm.edit(record);
+        });
       },
       close () {
         this.$emit('close');
         this.visible = false;
       },
+      submitCallback(){
+        this.$emit('ok');
+        this.visible = false;
+      },
       handleOk () {
-        const that = this;
-        // 触发表单验证
-        this.form.validateFields((err, values) => {
-          if (!err) {
-            that.confirmLoading = true;
-            let httpurl = '';
-            let method = '';
-            if(!this.model.id){
-              httpurl+=this.url.add;
-              method = 'post';
-            }else{
-              httpurl+=this.url.edit;
-               method = 'put';
-            }
-            let formData = Object.assign(this.model, values);
-            console.log("表单提交数据",formData)
-            httpAction(httpurl,formData,method).then((res)=>{
-              if(res.success){
-                that.$message.success(res.message);
-                that.$emit('ok');
-              }else{
-                that.$message.warning(res.message);
-              }
-            }).finally(() => {
-              that.confirmLoading = false;
-              that.close();
-            })
-          }
-         
-        })
+        this.$refs.realForm.submitForm();
       },
       handleCancel () {
         this.close()
-      },
-      popupCallback(row){
-        this.form.setFieldsValue(pick(row,'proposer','brief','content','solution','solutionState','typeId'))
       }
-      
     }
   }
 </script>
@@ -144,5 +68,16 @@
     margin-left: 30px;
     margin-bottom: 30px;
     float: right;
+  }
+  .drawer-footer{
+    position: absolute;
+    bottom: -8px;
+    width: 100%;
+    border-top: 1px solid #e8e8e8;
+    padding: 10px 16px;
+    text-align: right;
+    left: 0;
+    background: #fff;
+    border-radius: 0 0 2px 2px;
   }
 </style>
