@@ -20,17 +20,25 @@
           </a-col>
           <a-col :span="24">
             <a-form-item label="解决方案" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <j-editor v-decorator="['solution',{trigger:'input'}]"/>
+              <a-textarea v-decorator="['solution']" rows="4" placeholder="请输入解决方案"/>
             </a-form-item>
           </a-col>
           <a-col :span="24">
             <a-form-item label="是否解决" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <j-switch v-decorator="['solutionState']" ></j-switch>
+              <j-switch :options="['1','0']" v-decorator="['solutionState']" ></j-switch>
             </a-form-item>
           </a-col>
           <a-col :span="24">
             <a-form-item label="问题类型" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <j-dict-select-tag type="list" v-decorator="['typeId', validatorRules.typeId]" :trigger-change="true" dictCode="zq_question_type,id,pid,name,has_child,0" placeholder="请选择问题类型"/>
+              <j-tree-select
+                ref="treeSelect"
+                placeholder="请选择父级节点"
+                v-decorator="['typeId']"
+                dict="zq_question_type,type_name,id"
+                pidField="pid"
+                pidValue="0"
+                hasChildField="has_child">
+              </j-tree-select>
             </a-form-item>
           </a-col>
           <a-col v-if="showFlowSubmitButton" :span="24" style="text-align: center">
@@ -48,17 +56,17 @@
   import pick from 'lodash.pick'
   import { validateDuplicateValue } from '@/utils/util'
   import JFormContainer from '@/components/jeecg/JFormContainer'
-  import JDictSelectTag from "@/components/dict/JDictSelectTag"
   import JEditor from '@/components/jeecg/JEditor'
   import JSwitch from '@/components/jeecg/JSwitch'
+  import JTreeSelect from '@/components/jeecg/JTreeSelect'
 
   export default {
-    name: "ZqQuestionContentForm",
+    name: 'ZqQuestionContentForm',
     components: {
       JFormContainer,
-      JDictSelectTag,
       JEditor,
       JSwitch,
+      JTreeSelect
     },
     props: {
       //流程表单data
@@ -67,8 +75,8 @@
         default: ()=>{},
         required: false
       },
-      //表单模式：false流程表单 true普通表单
-      normal: {
+      //表单模式：true流程表单 false普通表单
+      formBpm: {
         type: Boolean,
         default: false,
         required: false
@@ -109,30 +117,24 @@
     },
     computed: {
       formDisabled(){
-        if(this.normal===false){
+        if(this.formBpm===true){
           if(this.formData.disabled===false){
             return false
-          }else{
-            return true
           }
+          return true
         }
         return this.disabled
       },
       showFlowSubmitButton(){
-        if(this.normal===false){
+        if(this.formBpm===true){
           if(this.formData.disabled===false){
             return true
-          }else{
-            return false
           }
-        }else{
-          return false
         }
+        return false
       }
     },
     created () {
-      //如果是流程中表单，则需要加载流程表单data
-      this.showFlowData();
     },
     methods: {
       add () {
@@ -146,17 +148,7 @@
           this.form.setFieldsValue(pick(this.model,'proposer','brief','content','solution','solutionState','typeId'))
         })
       },
-      //渲染流程表单数据
-      showFlowData(){
-        if(this.normal === false){
-          let params = {id:this.formData.dataId};
-          getAction(this.url.queryById,params).then((res)=>{
-            if(res.success){
-              this.edit (res.result);
-            }
-          });
-        }
-      },
+
       submitForm () {
         const that = this;
         // 触发表单验证

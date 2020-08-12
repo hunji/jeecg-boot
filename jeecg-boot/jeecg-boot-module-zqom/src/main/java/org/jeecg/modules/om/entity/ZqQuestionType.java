@@ -61,7 +61,7 @@ public class ZqQuestionType implements Serializable {
 	/**分类名称*/
 	@Excel(name = "分类名称", width = 15)
 	@ApiModelProperty(value = "分类名称")
-	private java.lang.String name;
+	private java.lang.String typeName;
 	/**描述*/
 	@Excel(name = "描述", width = 15)
 	@ApiModelProperty(value = "描述")

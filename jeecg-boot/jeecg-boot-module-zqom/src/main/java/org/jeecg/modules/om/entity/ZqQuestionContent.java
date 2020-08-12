@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 /**
  * @Description: 日常问题
  * @Author: jeecg-boot
- * @Date:   2020-07-10
+ * @Date:   2020-07-30
  * @Version: V1.0
  */
 @Data
@@ -32,7 +32,7 @@ public class ZqQuestionContent implements Serializable {
     private static final long serialVersionUID = 1L;
 
 	/**主键*/
-	@TableId(type = IdType.ASSIGN_UUID)
+	@TableId(type = IdType.ASSIGN_ID)
     @ApiModelProperty(value = "主键")
     private java.lang.String id;
 	/**创建人*/
@@ -75,9 +75,9 @@ public class ZqQuestionContent implements Serializable {
 	@Excel(name = "是否解决", width = 15)
     @ApiModelProperty(value = "是否解决")
     private java.lang.Integer solutionState;
-    /**问题类型*/
-    @Excel(name = "问题类型", width = 15, dictTable = "zq_question_type", dicText = "id,pid,name,has_child", dicCode = "0")
-    @Dict(dictTable = "zq_question_type", dicText = "id,pid,name,has_child", dicCode = "0")
+	/**问题类型*/
+	@Dict(dictTable = "zq_question_type",dicCode = "id",dicText = "type_name")
+	@Excel(name = "问题类型", width = 15)
     @ApiModelProperty(value = "问题类型")
     private java.lang.String typeId;
 }

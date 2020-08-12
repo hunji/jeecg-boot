@@ -25,7 +25,7 @@
           </a-col>
           <a-col :span="24">
             <a-form-item label="是否解决" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-input-number v-decorator="['solutionState']" placeholder="请输入是否解决" style="width: 100%"/>
+              <j-switch v-decorator="['solutionState']" ></j-switch>
             </a-form-item>
           </a-col>
           <a-col :span="24">
@@ -49,12 +49,14 @@
   import { validateDuplicateValue } from '@/utils/util'
   import JFormContainer from '@/components/jeecg/JFormContainer'
   import JEditor from '@/components/jeecg/JEditor'
+  import JSwitch from '@/components/jeecg/JSwitch'
 
   export default {
     name: 'ZqQuestionContentForm',
     components: {
       JFormContainer,
       JEditor,
+      JSwitch,
     },
     props: {
       //流程表单data

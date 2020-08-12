@@ -5,10 +5,10 @@
     :visible="visible"
     switchFullscreen
     @ok="handleOk"
-    :okButtonProps="{ class:{ disabled: disablesubmit} }"
+    :okButtonProps="{ class:{'jee-hidden': disableSubmit} }"
     @cancel="handleCancel"
     cancelText="关闭">
-    <zq-question-content-form ref="realForm" @ok="submitCallback" :readOnly="disableSubmit" normal></zq-question-content-form>
+    <zq-question-content-form ref="realForm" @ok="submitCallback" :disabled="disableSubmit"></zq-question-content-form>
   </j-modal>
 </template>
 
@@ -16,7 +16,7 @@
 
   import ZqQuestionContentForm from './ZqQuestionContentForm'
   export default {
-    name: "ZqQuestionContentModal",
+    name: 'ZqQuestionContentModal',
     components: {
       ZqQuestionContentForm
     },

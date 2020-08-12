@@ -5,15 +5,22 @@
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
+            <a-form-item label="提出人">
+              <a-input placeholder="请输入提出人" v-model="queryParam.proposer"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :xl="6" :lg="7" :md="8" :sm="24">
             <a-form-item label="是否解决">
               <j-switch placeholder="请选择是否解决" v-model="queryParam.solutionState"  query></j-switch>
             </a-form-item>
           </a-col>
-          <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="问题类型">
-              <j-dict-select-tag placeholder="请选择问题类型" v-model="queryParam.typeId" dictCode="zq_question_type,id,pid,name,has_child,0"/>
-            </a-form-item>
-          </a-col>
+          <template v-if="toggleSearchStatus">
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="问题类型">
+                <a-input placeholder="请输入问题类型" v-model="queryParam.typeId"></a-input>
+              </a-form-item>
+            </a-col>
+          </template>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
@@ -28,7 +35,7 @@
       </a-form>
     </div>
     <!-- 查询区域-END -->
-    
+
     <!-- 操作按钮区域 -->
     <div class="table-operator">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
@@ -117,15 +124,12 @@
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import ZqQuestionContentModal from './modules/ZqQuestionContentModal'
-
-  import JDictSelectTag from '@/components/dict/JDictSelectTag.vue'
   import JSwitch from '@/components/jeecg/JSwitch'
 
   export default {
-    name: "ZqQuestionContentList",
+    name: 'ZqQuestionContentList',
     mixins:[JeecgListMixin, mixinDevice],
     components: {
-      JDictSelectTag,
       JSwitch,
       ZqQuestionContentModal
     },
@@ -155,27 +159,14 @@
             dataIndex: 'brief'
           },
           {
-            title:'详情',
+            title:'问题类型',
             align:"center",
-            dataIndex: 'content',
-            scopedSlots: {customRender: 'htmlSlot'}
-          },
-          {
-            title:'解决方案',
-            align:"center",
-            dataIndex: 'solution',
-            scopedSlots: {customRender: 'htmlSlot'}
+            dataIndex: 'typeId_dictText'
           },
           {
             title:'是否解决',
             align:"center",
-            dataIndex: 'solutionState',
-            customRender: (text) => (text ? filterMultiDictText(this.dictOptions['solutionState'], text) : ''),
-          },
-          {
-            title:'问题类型',
-            align:"center",
-            dataIndex: 'typeId_dictText'
+            dataIndex: 'solutionState_dictText'
           },
           {
             title: '操作',
@@ -198,7 +189,7 @@
       }
     },
     created() {
-      this.$set(this.dictOptions, 'solutionState', [{text:'是',value:'Y'},{text:'否',value:'N'}])
+      this.$set(this.dictOptions, 'solutionState', [{text:'是',value:'1'},{text:'否',value:'0'}])
     },
     computed: {
       importExcelUrl: function(){

@@ -5,15 +5,22 @@
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="是否解决">
-              <a-input placeholder="请输入是否解决" v-model="queryParam.solutionState"></a-input>
+            <a-form-item label="提出人">
+              <a-input placeholder="请输入提出人" v-model="queryParam.proposer"></a-input>
             </a-form-item>
           </a-col>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="问题类型">
-              <a-input placeholder="请输入问题类型" v-model="queryParam.typeId"></a-input>
+            <a-form-item label="是否解决">
+              <j-switch placeholder="请选择是否解决" v-model="queryParam.solutionState"  query></j-switch>
             </a-form-item>
           </a-col>
+          <template v-if="toggleSearchStatus">
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="问题类型">
+                <a-input placeholder="请输入问题类型" v-model="queryParam.typeId"></a-input>
+              </a-form-item>
+            </a-col>
+          </template>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
@@ -117,11 +124,13 @@
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import ZqQuestionContentModal from './modules/ZqQuestionContentModal'
+  import JSwitch from '@/components/jeecg/JSwitch'
 
   export default {
     name: 'ZqQuestionContentList',
     mixins:[JeecgListMixin, mixinDevice],
     components: {
+      JSwitch,
       ZqQuestionContentModal
     },
     data () {
@@ -164,7 +173,8 @@
           {
             title:'是否解决',
             align:"center",
-            dataIndex: 'solutionState'
+            dataIndex: 'solutionState',
+            customRender: (text) => (text ? filterMultiDictText(this.dictOptions['solutionState'], text) : ''),
           },
           {
             title:'问题类型',
@@ -192,6 +202,7 @@
       }
     },
     created() {
+      this.$set(this.dictOptions, 'solutionState', [{text:'是',value:'Y'},{text:'否',value:'N'}])
     },
     computed: {
       importExcelUrl: function(){

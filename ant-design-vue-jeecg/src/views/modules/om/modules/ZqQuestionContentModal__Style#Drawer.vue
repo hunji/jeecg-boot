@@ -19,7 +19,7 @@
   import ZqQuestionContentForm from './ZqQuestionContentForm'
 
   export default {
-    name: "ZqQuestionContentModal",
+    name: 'ZqQuestionContentModal',
     components: {
       ZqQuestionContentForm
     },

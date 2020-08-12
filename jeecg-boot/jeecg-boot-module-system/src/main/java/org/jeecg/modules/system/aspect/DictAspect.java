@@ -145,7 +145,7 @@ public class DictAspect {
                 continue; //跳过循环
             }
             if (!StringUtils.isEmpty(table)){
-                log.debug("--DictAspect------dicTable="+ table+" ,dicText= "+text+" ,dicCode="+code);
+                log.info("--DictAspect------dicTable="+ table+" ,dicText= "+text+" ,dicCode="+code);
                 tmpValue= dictService.queryTableDictTextByKey(table,text,code,k.trim());
             }else {
                 tmpValue = dictService.queryDictTextByKey(code, k.trim());

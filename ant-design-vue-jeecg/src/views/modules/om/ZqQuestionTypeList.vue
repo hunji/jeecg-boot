@@ -100,7 +100,7 @@
           {
             title:'分类名称',
             align:"left",
-            dataIndex: 'name'
+            dataIndex: 'code'
           },
           {
             title:'描述',
@@ -175,7 +175,7 @@
         return result.map(item=>{
           //判断是否标记了带有子节点
           if(item[this.hasChildrenField]=='1'){
-            let loadChild = { id: item.id+'_loadChild', name: 'loading...', isLoading: true }
+            let loadChild = { id: item.id+'_loadChild', code: 'loading...', isLoading: true }
             item.children = [loadChild]
           }
           return item
