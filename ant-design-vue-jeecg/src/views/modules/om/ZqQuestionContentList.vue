@@ -11,13 +11,21 @@
           </a-col>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
             <a-form-item label="是否解决">
-              <j-switch placeholder="请选择是否解决" v-model="queryParam.solutionState"  query></j-switch>
+              <j-switch placeholder="请选择是否解决" :options="['1','0']" v-model="queryParam.solutionState"  query></j-switch>
             </a-form-item>
           </a-col>
           <template v-if="toggleSearchStatus">
             <a-col :xl="6" :lg="7" :md="8" :sm="24">
               <a-form-item label="问题类型">
-                <a-input placeholder="请输入问题类型" v-model="queryParam.typeId"></a-input>
+                <j-tree-select
+                  ref="treeSelect"
+                  placeholder="请输入问题类型"
+                  v-model="queryParam.typeId"
+                  dict="zq_question_type,type_name,id"
+                  pidField="pid"
+                  pidValue="0"
+                  hasChildField="has_child">
+                </j-tree-select>
               </a-form-item>
             </a-col>
           </template>
@@ -125,13 +133,15 @@
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import ZqQuestionContentModal from './modules/ZqQuestionContentModal'
   import JSwitch from '@/components/jeecg/JSwitch'
+  import JTreeSelect from '@/components/jeecg/JTreeSelect'
 
   export default {
     name: 'ZqQuestionContentList',
     mixins:[JeecgListMixin, mixinDevice],
     components: {
       JSwitch,
-      ZqQuestionContentModal
+      ZqQuestionContentModal,
+      JTreeSelect
     },
     data () {
       return {

@@ -128,6 +128,11 @@
               this.reload()
             }
           })
+        }else{
+          let tabLayout = getVmParentByName(this, 'TabLayout')
+          tabLayout.excuteCallback(()=>{
+            this.reload()
+          })
         }
       },
 

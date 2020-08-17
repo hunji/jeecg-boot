@@ -138,7 +138,7 @@ public class SysDictServiceImpl extends ServiceImpl<SysDictMapper, SysDict> impl
 	 * @return
 	 */
 	@Override
-	@Cacheable(value = CacheConstant.SYS_DICT_TABLE_CACHE)
+	@Cacheable(value = CacheConstant.SYS_DICT_TABLE_CACHE_ITEM)
 	public List<String> queryTableDictByKeys(String table, String text, String code, String keys) {
 		if(oConvertUtils.isEmpty(keys)){
 			return null;
@@ -158,7 +158,8 @@ public class SysDictServiceImpl extends ServiceImpl<SysDictMapper, SysDict> impl
 		return texts;
 	}
 
-    /**
+
+	/**
      * 根据字典类型id删除关联表中其对应的数据
      */
     @Override

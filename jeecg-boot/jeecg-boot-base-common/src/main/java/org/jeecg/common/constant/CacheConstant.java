@@ -17,6 +17,11 @@ public interface CacheConstant {
     public static final String SYS_DICT_TABLE_CACHE = "sys:cache:dictTable";
 
 	/**
+	 * 表字典项信息缓存
+	 */
+	public static final String SYS_DICT_TABLE_CACHE_ITEM = "sys:cache:dictTable:Item";
+
+	/**
 	 * 数据权限配置缓存
 	 */
     public static final String SYS_DATA_PERMISSIONS_CACHE = "sys:cache:permission:datarules";

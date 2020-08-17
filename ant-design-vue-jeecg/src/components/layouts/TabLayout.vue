@@ -152,6 +152,9 @@
       // update-end-author:sunjianlei date:20191223 for: 修复从单页模式切换回多页模式后首页不居第一位的 BUG
     },
     methods: {
+       excuteCallback(callback){
+        callback()
+      },
       // update-begin-author:sunjianlei date:20191223 for: 修复从单页模式切换回多页模式后首页不居第一位的 BUG
       // 将首页添加到第一位
       addIndexToFirst() {
