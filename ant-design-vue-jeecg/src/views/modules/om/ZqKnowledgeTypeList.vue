@@ -100,7 +100,7 @@
           {
             title:'名称',
             align:"left",
-            dataIndex: 'name'
+            dataIndex: 'typeName'
           },
           {
             title:'图片',
@@ -116,7 +116,7 @@
           {
             title:'排序字段',
             align:"left",
-            dataIndex: 'ordernum'
+            dataIndex: 'orderNum'
           },
           {
             title: '操作',

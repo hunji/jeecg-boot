@@ -17,26 +17,23 @@
             ref="treeSelect"
             placeholder="请选择父级节点"
             v-decorator="['pid']"
-            dict="zq_knowledge_type,name,id"
+            dict="zq_knowledge_type,type_name,id"
             pidField="pid"
             pidValue="0"
             hasChildField="has_child">
           </j-tree-select>
         </a-form-item>
         <a-form-item label="名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="['name', validatorRules.name]" placeholder="请输入名称"></a-input>
+          <a-input v-decorator="['typeName', validatorRules.typeName]" placeholder="请输入名称"></a-input>
         </a-form-item>
         <a-form-item label="图片" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <j-image-upload isMultiple v-decorator="['pics']"></j-image-upload>
         </a-form-item>
         <a-form-item label="类型说明" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="['content']" placeholder="请输入类型说明"></a-input>
-        </a-form-item>
-        <a-form-item label="内容" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <j-editor v-decorator="['content',{trigger:'input'}]"/>
         </a-form-item>
         <a-form-item label="排序字段" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input-number v-decorator="['ordernum']" placeholder="请输入排序字段" style="width: 100%"/>
+          <a-input-number v-decorator="['orderNum']" placeholder="请输入排序字段" style="width: 100%"/>
         </a-form-item>
         
       </a-form>
@@ -78,7 +75,7 @@
 
         confirmLoading: false,
         validatorRules: {
-          name: {
+          typeName: {
             rules: [
               { required: true, message: '请输入名称!'},
             ]
@@ -104,7 +101,7 @@
         this.model = Object.assign({}, record);
         this.visible = true;
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'pid','name','pics','content','ordernum'))
+          this.form.setFieldsValue(pick(this.model,'pid','typeName','pics','content','orderNum'))
         })
       },
       close () {
@@ -149,7 +146,7 @@
         this.close()
       },
       popupCallback(row){
-        this.form.setFieldsValue(pick(row,'pid','name','pics','content','ordernum'))
+        this.form.setFieldsValue(pick(row,'pid','typeName','pics','content','orderNum'))
       },
       submitSuccess(formData,flag){
         if(!formData.id){

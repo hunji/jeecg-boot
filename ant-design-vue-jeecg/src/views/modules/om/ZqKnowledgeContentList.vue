@@ -10,10 +10,25 @@
             </a-form-item>
           </a-col>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="0.未审核 1.已审核">
-              <a-input placeholder="请输入0.未审核 1.已审核" v-model="queryParam.rstate"></a-input>
+            <a-form-item label="审核状态">
+              <j-dict-select-tag v-model="queryParam.reviewState" title="审核状态" dictCode="approval_status" placeholder="请选择"/>
             </a-form-item>
           </a-col>
+          <template v-if="toggleSearchStatus">
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="问题类型">
+                <j-tree-select
+                  ref="treeSelect"
+                  placeholder="请输入问题类型"
+                  v-model="queryParam.typeId"
+                  dict="zq_knowledge_type,type_name,id"
+                  pidField="pid"
+                  pidValue="0"
+                  hasChildField="has_child">
+                </j-tree-select>
+              </a-form-item>
+            </a-col>
+          </template>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
@@ -28,7 +43,7 @@
       </a-form>
     </div>
     <!-- 查询区域-END -->
-    
+
     <!-- 操作按钮区域 -->
     <div class="table-operator">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
@@ -39,6 +54,8 @@
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="batchDel"><a-icon type="delete"/>删除</a-menu-item>
+          <a-menu-item key="2" @click="handleReview()">审核</a-menu-item>
+          <a-menu-item key="3" @click="handleBack()">撤销</a-menu-item>
         </a-menu>
         <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /></a-button>
       </a-dropdown>
@@ -54,6 +71,7 @@
       <a-table
         ref="table"
         size="middle"
+        :scroll="{x:true}"
         bordered
         rowKey="id"
         :columns="columns"
@@ -79,7 +97,7 @@
             type="primary"
             icon="download"
             size="small"
-            @click="uploadFile(text)">
+            @click="downloadFile(text)">
             下载
           </a-button>
         </template>
@@ -92,11 +110,17 @@
             <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
             <a-menu slot="overlay">
               <a-menu-item>
+                <a @click="handleDetail(record)">详情</a>
+              </a-menu-item>
+              <a-menu-item>
+                <a @click="handleReview(record.id)">审核</a>
+              </a-menu-item>
+              <a-menu-item>
+                <a @click="handleBack(record.id)">撤销</a>
+              </a-menu-item>
+              <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
                   <a>删除</a>
-                </a-popconfirm>
-                <a-popconfirm title="确定审核通过吗?" @confirm="() => handleDelete(record.id)">
-                  <a>通过</a>
                 </a-popconfirm>
               </a-menu-item>
             </a-menu>
@@ -117,12 +141,17 @@
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import ZqKnowledgeContentModal from './modules/ZqKnowledgeContentModal'
   import {filterMultiDictText} from '@/components/dict/JDictSelectUtil'
+  import JTreeSelect from '@/components/jeecg/JTreeSelect'
+  import JDictSelectTag from '@/components/dict/JDictSelectTag.vue'
+  import { putAction } from '@/api/manage'
 
   export default {
     name: "ZqKnowledgeContentList",
     mixins:[JeecgListMixin, mixinDevice],
     components: {
-      ZqKnowledgeContentModal
+      ZqKnowledgeContentModal,
+      JTreeSelect,
+      JDictSelectTag
     },
     data () {
       return {
@@ -145,14 +174,19 @@
             dataIndex: 'title'
           },
           {
+            title:'类型',
+            align:"center",
+            dataIndex: 'typeId_dictText'
+          },
+          {
             title:'简要描述',
             align:"center",
             dataIndex: 'brief'
           },
           {
-            title:'类型 编号',
+            title:'审核状态',
             align:"center",
-            dataIndex: 'typeid_dictText'
+            dataIndex: 'reviewState_dictText'
           },
           {
             title: '操作',
@@ -169,6 +203,8 @@
           deleteBatch: "/om/zqKnowledgeContent/deleteBatch",
           exportXlsUrl: "/om/zqKnowledgeContent/exportXls",
           importExcelUrl: "om/zqKnowledgeContent/importExcel",
+          reviewUrl: "om/zqKnowledgeContent/review",
+          backUrl: "om/zqKnowledgeContent/sendBack",
         },
         dictOptions:{},
       }
@@ -180,7 +216,52 @@
     },
     methods: {
       initDictConfig(){
-      }
+      },
+      // 审核
+      handleReview(id){
+        let ids = id ? id : this.selectedRowKeys.join(',')
+        var that = this;
+        this.$confirm({
+          title: "确认提交",
+          content: "是否确认审核通过?",
+          onOk: () =>{
+            this.loading = true;
+            putAction(this.url.reviewUrl, {ids: ids},'post').then((res) => {
+              if (res.success) {
+                this.$message.success(res.message);
+                this.loadData();
+                this.onClearSelected();
+              } else {
+                this.$message.warning(res.message);
+              }
+            }).finally(() => {
+              this.loading = false;
+            });
+          }
+        });
+      },
+      // 撤销审核
+      handleBack(id){
+        let ids = id ? id : this.selectedRowKeys.join(',')
+        this.$confirm({
+          title: "确认提交",
+          content: "是否撤销审核?",
+          onOk: ()=>{
+            this.loading = true;
+            putAction(this.url.backUrl, {ids: ids},'post').then((res) => {
+              if (res.success) {
+                this.$message.success(res.message);
+                this.loadData();
+                this.onClearSelected();
+              } else {
+                this.$message.warning(res.message);
+              }
+            }).finally(() => {
+              this.loading = false;
+            });
+          }
+        });
+      },
     }
   }
 </script>

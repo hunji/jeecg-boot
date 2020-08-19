@@ -13,5 +13,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @Version: V1.0
  */
 public interface ZqKnowledgeContentMapper extends BaseMapper<ZqKnowledgeContent> {
-
+    Integer submitBatch(@Param("ids") String[] ids, @Param("status")int status);
 }

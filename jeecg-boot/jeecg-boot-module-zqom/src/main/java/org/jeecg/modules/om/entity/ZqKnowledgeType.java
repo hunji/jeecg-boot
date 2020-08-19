@@ -61,7 +61,7 @@ public class ZqKnowledgeType implements Serializable {
 	/**名称*/
 	@Excel(name = "名称", width = 15)
 	@ApiModelProperty(value = "名称")
-	private java.lang.String name;
+	private java.lang.String typeName;
 	/**图片*/
 	@Excel(name = "图片", width = 15)
 	@ApiModelProperty(value = "图片")
@@ -73,5 +73,5 @@ public class ZqKnowledgeType implements Serializable {
 	/**排序字段*/
 	@Excel(name = "排序字段", width = 15)
 	@ApiModelProperty(value = "排序字段")
-	private java.lang.Integer ordernum;
+	private java.lang.Integer orderNum;
 }

@@ -207,7 +207,9 @@ public class ZqQuestionContentController extends JeecgController<ZqQuestionConte
 	 public Result<?> review(@RequestBody JSONObject jsonObject) {
 		 String ids = jsonObject.getString("ids");
 		 this.zqQuestionContentService.submitBatch(ids.split(","),2);
-		 
+
+		 // 将问题整理为知识内容
+
 		 return Result.ok("审核通过!");
 	 }
 

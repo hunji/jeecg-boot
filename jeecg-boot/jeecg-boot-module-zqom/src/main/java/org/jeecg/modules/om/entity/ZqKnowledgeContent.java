@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 
 /**
  * @Description: 知识内容信息
- * @Author: jeecg-boot
+ * @Author: hunji
  * @Date:   2020-07-09
  * @Version: V1.0
  */
@@ -67,30 +67,31 @@ public class ZqKnowledgeContent implements Serializable {
     @ApiModelProperty(value = "内容")
     private java.lang.String content;
 	/**0.未审核 1.已审核*/
+    @Dict(dicCode = "approval_status")
 	@Excel(name = "0.未审核 1.已审核", width = 15)
     @ApiModelProperty(value = "0.未审核 1.已审核")
-    private java.lang.Integer rstate;
+    private java.lang.Integer reviewState;
 	/**审核时间*/
 	@Excel(name = "审核时间", width = 15, format = "yyyy-MM-dd")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern="yyyy-MM-dd")
     @ApiModelProperty(value = "审核时间")
-    private java.util.Date reviewdate;
+    private java.util.Date reviewDate;
 	/**重要程度--评级时候判断*/
 	@Excel(name = "重要程度--评级时候判断", width = 15)
     @ApiModelProperty(value = "重要程度--评级时候判断")
     private java.lang.Integer rank;
-	/**点赞数目*/
+	/**点赞数目--在录入的时候不需要录入，当知识返回后可以保存之前的数据*/
 	@Excel(name = "点赞数目", width = 15)
     @ApiModelProperty(value = "点赞数目")
-    private java.lang.Integer likenum;
+    private java.lang.Integer likeNum;
 	/**浏览数目*/
 	@Excel(name = "浏览数目", width = 15)
     @ApiModelProperty(value = "浏览数目")
-    private java.lang.Integer viewnum;
+    private java.lang.Integer viewNum;
 	/**类型 编号*/
 	@Excel(name = "类型 编号", width = 15, dictTable = "zq_knowledge_type", dicText = "name", dicCode = "id")
-	@Dict(dictTable = "zq_knowledge_type", dicText = "name", dicCode = "id")
+	@Dict(dictTable = "zq_knowledge_type", dicText = "type_name", dicCode = "id")
     @ApiModelProperty(value = "类型 编号")
-    private java.lang.Double typeid;
+    private java.lang.String typeId;
 }

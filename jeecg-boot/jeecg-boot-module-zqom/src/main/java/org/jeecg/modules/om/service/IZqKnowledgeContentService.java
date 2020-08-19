@@ -1,5 +1,6 @@
 package org.jeecg.modules.om.service;
 
+import org.apache.ibatis.annotations.Param;
 import org.jeecg.modules.om.entity.ZqKnowledgeContent;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -10,5 +11,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @Version: V1.0
  */
 public interface IZqKnowledgeContentService extends IService<ZqKnowledgeContent> {
-
+    Integer submitBatch(@Param("ids") String[] ids, @Param("status")int status);
 }
