@@ -63,7 +63,7 @@ public class ZqQuestionContent implements Serializable {
     @ApiModelProperty(value = "简要描述")
     private java.lang.String brief;
 	/**详情*/
-	@Excel(name = "详情", width = 15)
+	// @Excel(name = "详情", width = 15)
     @ApiModelProperty(value = "详情")
     private java.lang.String content;
 	/**解决方案*/
@@ -72,12 +72,17 @@ public class ZqQuestionContent implements Serializable {
     private java.lang.String solution;
 	/**是否解决*/
     @Dict(dicCode = "yn")
-	@Excel(name = "是否解决", width = 15)
+	@Excel(name = "是否解决", width = 15,dicCode="yn")
     @ApiModelProperty(value = "是否解决")
     private java.lang.Integer solutionState;
 	/**问题类型*/
 	@Dict(dictTable = "zq_question_type",dicCode = "id",dicText = "type_name")
-	@Excel(name = "问题类型", width = 15)
+	@Excel(name = "问题类型", width = 15,dictTable ="zq_question_type",dicText = "type_name",dicCode = "id")
     @ApiModelProperty(value = "问题类型")
     private java.lang.String typeId;
+
+    @Dict(dicCode = "question_status")
+    @Excel(name = "问题状态", width = 15,dicCode="question_status")
+    @ApiModelProperty(value = "问题状态")
+    private java.lang.Integer questionStatus;
 }

@@ -61,6 +61,11 @@ public interface CommonConstant {
 	 * 操作日志类型： 导出
 	 */
 	public static final int OPERATE_TYPE_6 = 6;
+
+    /**
+     * 操作日志类型： 其他
+     */
+    public static final int OPERATE_TYPE_7 = 7;
 	
 	
 	/** {@code 500 Server Error} (HTTP/1.0 - RFC 1945) */

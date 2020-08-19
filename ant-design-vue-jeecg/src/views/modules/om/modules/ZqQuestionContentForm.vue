@@ -8,9 +8,22 @@
               <a-input v-decorator="['proposer']" placeholder="请输入提出人"></a-input>
             </a-form-item>
           </a-col>
+           <a-col :span="24">
+            <a-form-item label="问题类型" :labelCol="labelCol" :wrapperCol="wrapperCol">
+              <j-tree-select
+                ref="treeSelect"
+                placeholder="请选择父级节点"
+                v-decorator="['typeId']"
+                dict="zq_question_type,type_name,id"
+                pidField="pid"
+                pidValue="0"
+                hasChildField="has_child">
+              </j-tree-select>
+            </a-form-item>
+          </a-col>
           <a-col :span="24">
             <a-form-item label="简要描述" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-textarea v-decorator="['brief']" rows="4" placeholder="请输入简要描述"/>
+              <a-textarea v-decorator="['brief']" rows="3" placeholder="请输入简要描述"/>
             </a-form-item>
           </a-col>
           <a-col :span="24">
@@ -26,19 +39,6 @@
           <a-col :span="24">
             <a-form-item label="是否解决" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <j-switch :options="['1','0']" v-decorator="['solutionState']" ></j-switch>
-            </a-form-item>
-          </a-col>
-          <a-col :span="24">
-            <a-form-item label="问题类型" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <j-tree-select
-                ref="treeSelect"
-                placeholder="请选择父级节点"
-                v-decorator="['typeId']"
-                dict="zq_question_type,type_name,id"
-                pidField="pid"
-                pidValue="0"
-                hasChildField="has_child">
-              </j-tree-select>
             </a-form-item>
           </a-col>
           <a-col v-if="showFlowSubmitButton" :span="24" style="text-align: center">

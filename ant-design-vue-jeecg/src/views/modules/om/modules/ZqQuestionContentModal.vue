@@ -4,6 +4,7 @@
     :width="width"
     :visible="visible"
     switchFullscreen
+    fullscreen
     @ok="handleOk"
     :okButtonProps="{ class:{'jee-hidden': disableSubmit} }"
     @cancel="handleCancel"

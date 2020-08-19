@@ -20,6 +20,18 @@ export function postAction(url,parameter) {
   })
 }
 
+//封装http请求，添加请求头,解决requestbody接收不到参数的问题
+export function $http(url,parameter,method) {
+  return axios({
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    },
+    url: url,
+    method:method,
+    params: parameter
+  })
+}
+
 //post method= {post | put}
 export function httpAction(url,parameter,method) {
   return axios({

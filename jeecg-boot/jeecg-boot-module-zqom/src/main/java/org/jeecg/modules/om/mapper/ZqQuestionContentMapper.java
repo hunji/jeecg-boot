@@ -13,5 +13,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @Version: V1.0
  */
 public interface ZqQuestionContentMapper extends BaseMapper<ZqQuestionContent> {
-
+    /**
+     * 批量提交
+     * @param ids
+     * @return
+     */
+    Integer submitBatch(@Param("ids") String[] ids, @Param("status")int status);
 }

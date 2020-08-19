@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.alibaba.fastjson.JSONObject;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -38,7 +40,7 @@ import org.jeecg.common.aspect.annotation.AutoLog;
 
  /**
  * @Description: 日常问题
- * @Author: jeecg-boot
+ * @Author: hunji
  * @Date:   2020-07-30
  * @Version: V1.0
  */
@@ -59,7 +61,6 @@ public class ZqQuestionContentController extends JeecgController<ZqQuestionConte
 	 * @param req
 	 * @return
 	 */
-	@AutoLog(value = "日常问题-分页列表查询")
 	@ApiOperation(value="日常问题-分页列表查询", notes="日常问题-分页列表查询")
 	@GetMapping(value = "/list")
 	public Result<?> queryPageList(ZqQuestionContent zqQuestionContent,
@@ -167,5 +168,48 @@ public class ZqQuestionContentController extends JeecgController<ZqQuestionConte
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, ZqQuestionContent.class);
     }
+
+
+
+     /**
+      *  申请转为知识
+      *
+      * @param ids
+      * @return
+      */
+     @AutoLog(value = "日常问题-批量提交")
+     @ApiOperation(value="日常问题-批量提交", notes="日常问题-批量提交")
+     @PutMapping(value = "/submitBatch")
+     public Result<?> submitBatch(@RequestBody JSONObject jsonObject) {
+		 String ids = jsonObject.getString("ids");
+         this.zqQuestionContentService.submitBatch(ids.split(","),1);
+         return Result.ok("提交成功!");
+     }
+
+	 /**
+	  *  返回重填
+	  */
+	 @AutoLog(value = "日常问题-审核不通过")
+	 @ApiOperation(value="日常问题-审核不通过", notes="日常问题-审核不通过")
+	 @PutMapping(value = "/sendBack")
+	 public Result<?> sendBack(@RequestBody JSONObject jsonObject) {
+		 String ids = jsonObject.getString("ids");
+		 this.zqQuestionContentService.submitBatch(ids.split(","),0);
+		 return Result.ok("驳回成功!");
+	 }
+
+	 /**
+	  *  审核知识内容
+	  */
+	 @AutoLog(value = "日常问题-审核通过")
+	 @ApiOperation(value="日常问题-审核通过", notes="日常问题-审核通过")
+	 @PutMapping(value = "/review")
+	 public Result<?> review(@RequestBody JSONObject jsonObject) {
+		 String ids = jsonObject.getString("ids");
+		 this.zqQuestionContentService.submitBatch(ids.split(","),2);
+		 
+		 return Result.ok("审核通过!");
+	 }
+
 
 }

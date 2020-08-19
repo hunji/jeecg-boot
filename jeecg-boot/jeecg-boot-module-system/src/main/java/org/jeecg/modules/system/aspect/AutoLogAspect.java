@@ -131,7 +131,7 @@ public class AutoLogAspect {
         if (methodName.startsWith("export")) {
         	return CommonConstant.OPERATE_TYPE_6;
 		}
-		return CommonConstant.OPERATE_TYPE_1;
+		return CommonConstant.OPERATE_TYPE_7;
 	}
 
 	/**

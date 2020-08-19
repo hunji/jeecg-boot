@@ -28,6 +28,11 @@
                 </j-tree-select>
               </a-form-item>
             </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="问题状态">
+                <j-dict-select-tag v-model="queryParam.questionStatus" title="状态" dictCode="question_status" placeholder="请选择"/>
+              </a-form-item>
+            </a-col>
           </template>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
@@ -54,6 +59,8 @@
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="batchDel"><a-icon type="delete"/>删除</a-menu-item>
+          <a-menu-item key="2" @click="handleSubmit()">转为知识</a-menu-item>
+          <a-menu-item key="2" @click="handleReview()">审核</a-menu-item>
         </a-menu>
         <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /></a-button>
       </a-dropdown>
@@ -111,6 +118,12 @@
                 <a @click="handleDetail(record)">详情</a>
               </a-menu-item>
               <a-menu-item>
+                <a @click="handleSubmit(record.id)">转为知识</a>
+              </a-menu-item>
+              <a-menu-item>
+                <a @click="handleReview(record.id)">审核</a>
+              </a-menu-item>
+              <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
                   <a>删除</a>
                 </a-popconfirm>
@@ -134,6 +147,8 @@
   import ZqQuestionContentModal from './modules/ZqQuestionContentModal'
   import JSwitch from '@/components/jeecg/JSwitch'
   import JTreeSelect from '@/components/jeecg/JTreeSelect'
+  import JDictSelectTag from '@/components/dict/JDictSelectTag.vue'
+  import { putAction } from '@/api/manage'
 
   export default {
     name: 'ZqQuestionContentList',
@@ -141,7 +156,8 @@
     components: {
       JSwitch,
       ZqQuestionContentModal,
-      JTreeSelect
+      JTreeSelect,
+      JDictSelectTag
     },
     data () {
       return {
@@ -179,6 +195,11 @@
             dataIndex: 'solutionState_dictText'
           },
           {
+            title:'状态',
+            align:"center",
+            dataIndex: 'questionStatus_dictText'
+          },
+          {
             title: '操作',
             dataIndex: 'action',
             align:"center",
@@ -193,7 +214,9 @@
           deleteBatch: "/om/zqQuestionContent/deleteBatch",
           exportXlsUrl: "/om/zqQuestionContent/exportXls",
           importExcelUrl: "om/zqQuestionContent/importExcel",
-          
+          submitBatchUrl: "om/zqQuestionContent/submitBatch",
+          sendBackUrl: "om/zqQuestionContent/sendBack",
+          reviewhUrl: "om/zqQuestionContent/review",
         },
         dictOptions:{},
       }
@@ -208,6 +231,74 @@
     },
     methods: {
       initDictConfig(){
+      },
+      // 转为知识--这里进行了优化，把批量和单个操作合一
+      handleSubmit(id){
+        if(!this.url.submitBatchUrl){
+          this.$message.error("请设置url.submitBatchUrl!")
+          return
+        }
+        let ids = id ? id : this.selectedRowKeys.join(',')
+        var that = this;
+        this.$confirm({
+          title: "确认提交",
+          content: "是否将选中知识转为知识?",
+          onOk: function () {
+            that.loading = true;
+            putAction(that.url.submitBatchUrl, {ids: ids},'post').then((res) => {
+              if (res.success) {
+                that.$message.success(res.message);
+                that.loadData();
+                that.onClearSelected();
+              } else {
+                that.$message.warning(res.message);
+              }
+            }).finally(() => {
+              that.loading = false;
+            });
+          }
+        });
+      },
+      // 审核知识：有两种结果，通过和不通过
+      handleReview(id){
+        let ids = id ? id : this.selectedRowKeys.join(',')
+        var that = this;
+        this.$confirm({
+          title: "审核",
+          content: "是否审核通过?",
+          closable: true,
+          maskClosable:true,
+          cancelText: '返回重填',
+          okText: '审核通过',
+          onOk: function () {
+            that.loading = true;
+            putAction(that.url.reviewhUrl, {ids: ids},'post').then((res) => {
+              if (res.success) {
+                that.$message.success(res.message);
+                that.loadData();
+                that.onClearSelected();
+              } else {
+                that.$message.warning(res.message);
+              }
+            }).finally(() => {
+              that.loading = false;
+            });
+          },
+          onCancel: function () {
+            that.loading = true;
+            putAction(that.url.sendBackUrl, {ids: ids},'post').then((res) => {
+              if (res.success) {
+                that.$message.success(res.message);
+                that.loadData();
+                that.onClearSelected();
+              } else {
+                that.$message.warning(res.message);
+              }
+            }).finally(() => {
+              that.loading = false;
+            });
+          },
+        });
       }
     }
   }
