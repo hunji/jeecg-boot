@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -173,6 +174,7 @@ public class ZqKnowledgeContentController extends JeecgController<ZqKnowledgeCon
 	 /**
 	  *  撤销审核
 	  */
+	 @RequiresPermissions("knowledge:review")
 	 @AutoLog(value = "")
 	 @ApiOperation(value="知识内容信息-撤销审核", notes="知识内容信息-撤销审核")
 	 @PutMapping(value = "/sendBack")
@@ -185,6 +187,7 @@ public class ZqKnowledgeContentController extends JeecgController<ZqKnowledgeCon
 	 /**
 	  *  审核通过
 	  */
+	 @RequiresPermissions("knowledge:review")
 	 @AutoLog(value = "知识内容信息-审核通过")
 	 @ApiOperation(value="知识内容信息-审核通过", notes="知识内容信息-审核通过")
 	 @PutMapping(value = "/review")

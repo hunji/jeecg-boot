@@ -11,9 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.om.entity.ZqKnowledgeContent;
 import org.jeecg.modules.om.entity.ZqQuestionContent;
 import org.jeecg.modules.om.service.IZqQuestionContentService;
 
@@ -189,6 +191,7 @@ public class ZqQuestionContentController extends JeecgController<ZqQuestionConte
 	 /**
 	  *  返回重填
 	  */
+     @RequiresPermissions("question:review")
 	 @AutoLog(value = "日常问题-审核不通过")
 	 @ApiOperation(value="日常问题-审核不通过", notes="日常问题-审核不通过")
 	 @PutMapping(value = "/sendBack")
@@ -201,14 +204,17 @@ public class ZqQuestionContentController extends JeecgController<ZqQuestionConte
 	 /**
 	  *  审核知识内容
 	  */
+     @RequiresPermissions("question:review")
 	 @AutoLog(value = "日常问题-审核通过")
 	 @ApiOperation(value="日常问题-审核通过", notes="日常问题-审核通过")
 	 @PutMapping(value = "/review")
 	 public Result<?> review(@RequestBody JSONObject jsonObject) {
 		 String ids = jsonObject.getString("ids");
-		 this.zqQuestionContentService.submitBatch(ids.split(","),2);
-
+		 String[] idList = ids.split(",");
+		 this.zqQuestionContentService.submitBatch(idList,2);
 		 // 将问题整理为知识内容
+		 List<ZqQuestionContent> questionContents = zqQuestionContentService.listByIds(Arrays.asList(idList));
+		 zqQuestionContentService.transformQuestionToKnowledge(questionContents);
 
 		 return Result.ok("审核通过!");
 	 }

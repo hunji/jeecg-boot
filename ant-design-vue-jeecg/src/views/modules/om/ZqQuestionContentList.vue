@@ -60,7 +60,7 @@
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="batchDel"><a-icon type="delete"/>删除</a-menu-item>
           <a-menu-item key="2" @click="handleSubmit()">转为知识</a-menu-item>
-          <a-menu-item key="3" @click="handleReview()">审核</a-menu-item>
+          <a-menu-item key="3" v-has="'question:review'" @click="handleReview()">审核</a-menu-item>
         </a-menu>
         <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /></a-button>
       </a-dropdown>
@@ -121,7 +121,7 @@
                 <a @click="handleSubmit(record.id)">转为知识</a>
               </a-menu-item>
               <a-menu-item>
-                <a @click="handleReview(record.id)">审核</a>
+                <a @click="handleReview(record.id)" v-has="'question:review'">审核</a>
               </a-menu-item>
               <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">

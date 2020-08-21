@@ -54,8 +54,8 @@
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="batchDel"><a-icon type="delete"/>删除</a-menu-item>
-          <a-menu-item key="2" @click="handleReview()">审核</a-menu-item>
-          <a-menu-item key="3" @click="handleBack()">撤销</a-menu-item>
+          <a-menu-item key="2" @click="handleReview()" v-has="'question:review'">审核</a-menu-item>
+          <a-menu-item key="3" @click="handleBack()" v-has="'question:review'">撤销</a-menu-item>
         </a-menu>
         <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /></a-button>
       </a-dropdown>
@@ -113,10 +113,10 @@
                 <a @click="handleDetail(record)">详情</a>
               </a-menu-item>
               <a-menu-item>
-                <a @click="handleReview(record.id)">审核</a>
+                <a @click="handleReview(record.id)" v-has="'question:review'">审核</a>
               </a-menu-item>
               <a-menu-item>
-                <a @click="handleBack(record.id)">撤销</a>
+                <a @click="handleBack(record.id)" v-has="'question:review'">撤销</a>
               </a-menu-item>
               <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">

@@ -14,7 +14,7 @@
         <a-form-item label="标题" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input v-decorator="['title']" placeholder="请输入标题"></a-input>
         </a-form-item>
-        <a-form-item label="问题类型" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <a-form-item label="类型" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <j-tree-select
             ref="treeSelect"
             placeholder="请选择父级节点"

@@ -4,6 +4,8 @@ import org.apache.ibatis.annotations.Param;
 import org.jeecg.modules.om.entity.ZqQuestionContent;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * @Description: 日常问题
  * @Author: jeecg-boot
@@ -18,4 +20,10 @@ public interface IZqQuestionContentService extends IService<ZqQuestionContent> {
      * @return
      */
     Integer submitBatch(@Param("ids") String[] ids, @Param("status")int status);
+
+    /**
+     * 将问题转化为知识内容
+     * @param list
+     */
+    void transformQuestionToKnowledge(List<ZqQuestionContent> list);
 }
