@@ -4,8 +4,8 @@
       <a-card-grid @click="changeView('ProcessStorageTransfer')">
         智能物流----储位转移
       </a-card-grid>
-      <a-card-grid >
-        功能2
+      <a-card-grid @click="changeView('ProcessStorageCorrection')" >
+        储位修正
       </a-card-grid>
       <a-card-grid>
         功能3
@@ -17,7 +17,7 @@
         功能5
       </a-card-grid>
       <a-card-grid >
-        功能2
+        功能222
       </a-card-grid>
       <a-card-grid >
         功能6
@@ -35,9 +35,11 @@
 
 <script>
   import ProcessStorageTransfer from './modules/ProcessStorageTransfer'
+  import ProcessStorageCorrection from './modules/ProcessStorageCorrection'
 export default {
   components: {
-    ProcessStorageTransfer
+    ProcessStorageTransfer,
+    ProcessStorageCorrection
   },
   data () {
     return {

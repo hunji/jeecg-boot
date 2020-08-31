@@ -8,6 +8,7 @@ import org.jeecg.modules.quartz.service.IStatisticsService;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author hunji
@@ -19,7 +20,7 @@ public class StatisticsServiceImpl extends ServiceImpl<StatisticsMapper, Statist
 
     @DS("newmes")
     @Override
-    public LinkedHashMap queryStatistics(String sql) {
+    public List<LinkedHashMap> queryStatistics(String sql) {
         return baseMapper.queryStatistics(sql);
     }
 }

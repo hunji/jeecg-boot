@@ -11,6 +11,7 @@ import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * 通用的查询统计任务
@@ -39,22 +40,26 @@ public class CommonStatisticsJob implements Job {
         //   名称唯一，只能查找到唯一一个查询统计
         StatisticsEntity entity = service.getOne(new QueryWrapper<StatisticsEntity>().eq("name", parameter));
         // 2.执行slq，拼接查询结果（发送信息参照模板）
-        LinkedHashMap sqlResults = service.queryStatistics(entity.getSqlStr());
+        List<LinkedHashMap> sqlResults = service.queryStatistics(entity.getSqlStr());
+
         String regex = ";|；|\\s+";
         String[] columNames= entity.getColumNames().split(regex);
 
         StringBuilder sb=new StringBuilder();
         sb.append("### "+entity.getTitle()+"                                                            \n");
         sb.append("**说明："+entity.getDescription()+"**");
-        // 循环拼接
-        int i = 0;
-        for ( Object item : sqlResults.keySet()) {
-            sb.append("\n");
-            if(columNames.length>i){
-                sb.append(columNames[i]+":");
+        // 循环拼接 --两种情况，一种只能查出一条数据的；一种为查出多条数据的
+
+        for (LinkedHashMap sqlResult : sqlResults) {
+            int i = 0;
+            for ( Object item : sqlResult.keySet()) {
+                sb.append("\n");
+                if(columNames.length>i){
+                    sb.append(columNames[i]+":");
+                }
+                sb.append(sqlResult.get(item));
+                i++;
             }
-            sb.append(sqlResults.get(item));
-            i++;
         }
         // 3.调用企业微信工具进行发送信息
         String result = WeChatUtil.sendInfo(entity.getWeChatToUser(), sb.toString());

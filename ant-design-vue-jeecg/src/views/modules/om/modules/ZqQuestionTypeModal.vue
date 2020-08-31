@@ -17,14 +17,14 @@
             ref="treeSelect"
             placeholder="请选择父级节点"
             v-decorator="['pid']"
-            dict="zq_question_type,name,id"
+            dict="zq_question_type,type_name,id"
             pidField="pid"
             pidValue="0"
             hasChildField="has_child">
           </j-tree-select>
         </a-form-item>
         <a-form-item label="分类名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="['name']" placeholder="请输入分类名称"></a-input>
+          <a-input v-decorator="['typeName']" placeholder="请输入分类名称"></a-input>
         </a-form-item>
         <a-form-item label="描述" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-textarea v-decorator="['content']" rows="4" placeholder="请输入描述"/>
@@ -86,7 +86,7 @@
         this.model = Object.assign({}, record);
         this.visible = true;
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'pid','name','content'))
+          this.form.setFieldsValue(pick(this.model,'pid','typeName','content'))
         })
       },
       close () {
@@ -131,7 +131,7 @@
         this.close()
       },
       popupCallback(row){
-        this.form.setFieldsValue(pick(row,'pid','name','content'))
+        this.form.setFieldsValue(pick(row,'pid','typeName','content'))
       },
       submitSuccess(formData,flag){
         if(!formData.id){

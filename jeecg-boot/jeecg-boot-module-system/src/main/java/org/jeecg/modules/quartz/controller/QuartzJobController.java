@@ -173,14 +173,12 @@ public class QuartzJobController {
 	public Result<Object> pauseJob(@RequestParam(name = "jobClassName", required = true) String jobClassName,
 								   @RequestParam(name = "jobParam", required = true) String jobParam) {
 		QuartzJob job = null;
-		job = quartzJobService.getOne(new LambdaQueryWrapper<QuartzJob>().eq(QuartzJob::getJobClassName, jobClassName));
+		job = quartzJobService.getOne(
+				new LambdaQueryWrapper<QuartzJob>()
+					.eq(QuartzJob::getJobClassName, jobClassName)
+					.eq(!StrUtil.isEmpty(jobParam),QuartzJob::getParameter,jobParam));
 		if (job == null) {
 			return Result.error("定时任务不存在！");
-		}
-		// 如果是CommonStatisticsJob的话 把参数拼接到名称里面
-		String identName = jobClassName;
-		if(isCommonStatisticsJob(identName)){
-			identName += jobParam;
 		}
 		quartzJobService.pause(job);
 		return Result.ok("暂停定时任务成功");

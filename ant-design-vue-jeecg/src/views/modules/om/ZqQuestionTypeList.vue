@@ -100,7 +100,7 @@
           {
             title:'分类名称',
             align:"left",
-            dataIndex: 'code'
+            dataIndex: 'typeName'
           },
           {
             title:'描述',

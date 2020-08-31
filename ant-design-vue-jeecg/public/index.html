@@ -242,12 +242,16 @@
   <!-- 全局配置 -->
   <script>
     window._CONFIG = {};
-    window._CONFIG['domianURL'] = 'http://127.0.0.1:8080/jeecg-boot';
+    window._CONFIG['domianURL'] = 'http://127.0.0.1:8080/jeecg-boot';  
+    // 发布
+    //window._CONFIG['domianURL'] = 'http://172.31.1.200:7070/jeecg-boot';
     window._CONFIG['casPrefixUrl'] = 'http://cas.example.org:8443/cas';
     window._CONFIG['onlinePreviewDomainURL'] = 'http://fileview.jeecg.com/onlinePreview'
     window._CONFIG['staticDomainURL'] = window._CONFIG['domianURL'] + '/sys/common/static';
     //window._CONFIG['downloadUrl'] = window._CONFIG['domianURL'] + '/sys/common/download';
     window._CONFIG['pdfDomainURL'] =  window._CONFIG['domianURL'] + '/sys/common/pdf/pdfPreviewIframe';
+
+    window._CONFIG['mesOPURL'] = 'http://172.31.1.36/MES_Production_MESws_EAI/wsEAI.asmx/InvokeSrv_json';  
   </script>
 </head>
 

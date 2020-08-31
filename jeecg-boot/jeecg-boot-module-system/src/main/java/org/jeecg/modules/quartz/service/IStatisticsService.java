@@ -5,6 +5,7 @@ import org.jeecg.common.system.base.service.JeecgService;
 import org.jeecg.modules.quartz.entity.StatisticsEntity;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * 公共的查询统计方法，接受后台传入的sql语句进行查
@@ -18,5 +19,5 @@ public interface IStatisticsService extends JeecgService<StatisticsEntity> {
      * @return
      */
     @DS("newmes")
-    LinkedHashMap queryStatistics(String sql);
+    List<LinkedHashMap> queryStatistics(String sql);
 }

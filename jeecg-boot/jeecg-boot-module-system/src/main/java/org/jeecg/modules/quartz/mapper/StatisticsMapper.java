@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.jeecg.modules.quartz.entity.StatisticsEntity;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author hunji
@@ -16,5 +17,5 @@ public interface StatisticsMapper extends BaseMapper<StatisticsEntity> {
      * @param sql
      * @return 有序的字段
      */
-    LinkedHashMap queryStatistics(String sql);
+    List<LinkedHashMap> queryStatistics(String sql);
 }

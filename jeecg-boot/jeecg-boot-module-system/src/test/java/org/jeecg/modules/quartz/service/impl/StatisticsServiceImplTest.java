@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -69,9 +70,11 @@ public class StatisticsServiceImplTest {
                 "And T.LOTNO = S.LOTNO And S.RFIDNO Like '011%'\n" +
                 ")\n" +
                 "group by SJ";
-        LinkedHashMap data = service.queryStatistics(sql);
-        for (Object o :data.keySet()){
-            log.info(o.toString() + data.get(o));
+        List<LinkedHashMap> data = service.queryStatistics(sql);
+        for (LinkedHashMap datum : data) {
+            for (Object o :datum.keySet()){
+                log.info(o.toString() + datum.get(o));
+            }
         }
     }
 }
