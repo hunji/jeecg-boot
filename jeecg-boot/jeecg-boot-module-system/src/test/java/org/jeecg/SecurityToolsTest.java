@@ -1,10 +1,16 @@
 package org.jeecg;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.util.security.SecurityTools;
 import org.jeecg.common.util.security.entity.*;
 import org.junit.Test;
 
+import java.util.Date;
+
+@Slf4j
 public class SecurityToolsTest {
     @Test
     public void Test(){
@@ -45,5 +51,27 @@ public class SecurityToolsTest {
         //解密报文data为解密报文
         //sucess 为验签成功失败标志 true代码验签成功，false代表失败
         System.out.println(new JSONObject(securityResp).toStringPretty());
+    }
+
+
+
+    @Test
+    public void dateTest(){
+        Date rkTime = DateUtil.parse("2020-10-27 17:30:00");
+        String s = DateUtil.formatDate(rkTime);
+        Date rkTime2 = DateUtil.parse(s+" 17:30:00");
+
+
+        long betweenDay = cn.hutool.core.date.DateUtil.between(new Date(),rkTime, DateUnit.DAY);
+        log.info("相差天数为： "+betweenDay);
+
+        log.info("s:"+s);
+        log.info("rkTime2:" +rkTime2);
+
+        if(rkTime.getTime()>rkTime2.getTime()){
+            log.info("true");
+        }else{
+            log.info("false");
+        }
     }
 }

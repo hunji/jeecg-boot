@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.om.mapper.MDCRecordMapper">
+    <select id="queryMdcRecordInfo" resultType="org.jeecg.modules.om.entity.MDCRecordEntity">
+        Select a.* from tc_mdc_record@db_erp a
+        <where>
+            <if test='lotno != null and lotno.trim()!= ""'>
+                and a.LOTNO like '%${lotno}%'
+            </if>
+            <if test='machineCode != null and machineCode.trim()!= ""'>
+                and a.MACHINECODE =#{machineCode}
+            </if>
+            <if test='kssj != null and kssj.trim()!= ""'>
+                and to_char(a.STARTDATE,'yyyy-mm-dd hh24:mi:ss') <![CDATA[ >= ]]> #{kssj}
+            </if>
+            <if test='jssj != null and jssj.trim()!= ""'>
+                and to_char(a.STARTDATE,'yyyy-mm-dd hh24:mi:ss') <![CDATA[ <= ]]> #{jssj}
+            </if>
+        </where>
+        order by a.STARTDATE desc
+    </select>
+</mapper>

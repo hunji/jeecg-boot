@@ -208,6 +208,10 @@
             scopedSlots: { customRender: 'action' }
           }
         ],
+        isorter:{ 
+          column: '',
+          order: ''
+        },
         url: {
           list: "/om/zqQuestionContent/list",
           delete: "/om/zqQuestionContent/delete",

@@ -22,15 +22,15 @@ spring:
         max-request-size: 10MB
   mail:
     host: smtp.163.com
-    username: jeecgos@163.com
-    password: ??
+    username: guo194194@163.com
+    password: YVSUHVTEDLZAOYMD
     properties:
       mail:
         smtp:
           auth: true
           starttls:
-            enable: true
-            required: true
+            enable: false
+            required: false
   ## quartz定时任务,采用数据库方式
   quartz:
     job-store-type: jdbc
@@ -139,7 +139,7 @@ spring:
           driver-class-name: oracle.jdbc.driver.OracleDriver
           url: jdbc:oracle:thin:@172.31.1.37:1521:MESDB
           username: MESSERIES
-          password: sa
+          password: Messeries_0918
           validation-query: SELECT 1 FROM DUAL
   #redis 配置
   redis:
@@ -181,8 +181,8 @@ jeecg :
     webapp: D://opt//webapp
   #短信秘钥
   sms:
-    accessKeyId: ??
-    accessKeySecret: ??
+    accessKeyId: LTAI4G1BTY7kQCq3R9uiMMse
+    accessKeySecret: iXkwCXnz0MNTYzSAJ02WSpuoR8DfPw
   shiro:
     excludeUrls: /test/jeecgDemo/demo3,/test/jeecgDemo/redisDemo/**,/category/**,/visual/**,/map/**,/jmreport/bigscreen2/**
   #阿里云oss存储配置
